@@ -17,7 +17,7 @@ artifacts="$5"
 underscore_name="$(echo -n "$log_name" | tr - _)"
 
 if [ "$#" -lt 6 ] ; then
-    docker push "$base_tag-$hash"
+    # docker push "$base_tag-$hash"
     docker push "$base_tag-$version"
 fi
 

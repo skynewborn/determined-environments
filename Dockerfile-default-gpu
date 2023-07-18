@@ -3,7 +3,7 @@ FROM ${BASE_IMAGE}
 
 COPY dockerfile_scripts /tmp/det_dockerfile_scripts
 
-RUN /tmp/det_dockerfile_scripts/install_google_cloud_sdk.sh
+#RUN /tmp/det_dockerfile_scripts/install_google_cloud_sdk.sh
 
 ARG WITH_NCCL
 # Make it look for the system nccl, which hopefully is the newer one we built

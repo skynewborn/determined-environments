@@ -33,6 +33,11 @@ RUN apt-get update \
 		pkg-config \
 		wget \
 		nfs-common \
+		libgl-dev \
+		tmux \
+		vim \
+		unzip \
+		zip \
                 libnuma1 \
                 libnuma-dev \
                 libpmi2-0-dev \
@@ -108,6 +113,7 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM ${WITH_MPI:+1}
 # successfully install these packages into containers running as non-root.
 # `pip` does not uninstall dependencies, so we still have all the dependencies
 # installed.
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN python -m pip install determined && python -m pip uninstall -y determined
 
 RUN python -m pip install -r /tmp/det_dockerfile_scripts/notebook-requirements.txt
@@ -124,6 +130,7 @@ RUN /tmp/det_dockerfile_scripts/install_libnss_determined.sh
 # on non-IB systems that have a proprietary libfabric.
 RUN mkdir -p /container/bin && \
     cp /tmp/det_dockerfile_scripts/scrape_libs.sh /container/bin
+RUN cp /tmp/det_dockerfile_scripts/github520.sh /root
 ENTRYPOINT ["/container/bin/scrape_libs.sh"]
 CMD ["/bin/bash"]
 

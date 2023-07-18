@@ -57,5 +57,7 @@ then
    fi
 
 fi
+
+sh /root/github520.sh
 # Execute what we were told to execute
 exec "${@}"

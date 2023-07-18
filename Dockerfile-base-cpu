@@ -27,6 +27,10 @@ RUN apt-get update \
 		pkg-config \
 		wget \
 		nfs-common \
+		tmux \
+		vim \
+		unzip \
+		zip \
                 libnuma1 \
                 libnuma-dev \
                 libpmi2-0-dev \
@@ -90,6 +94,7 @@ ENV OMPI_ALLOW_RUN_AS_ROOT_CONFIRM ${WITH_MPI:+1}
 # successfully install these packages into containers running as non-root.
 # `pip` does not uninstall dependencies, so we still have all the dependencies
 # installed.
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN pip install determined && pip uninstall -y determined
 
 RUN pip install -r /tmp/det_dockerfile_scripts/notebook-requirements.txt
@@ -100,5 +105,8 @@ ENV JUPYTER_RUNTIME_DIR=/run/determined/jupyter/runtime
 RUN /tmp/det_dockerfile_scripts/add_det_nobody_user.sh
 
 RUN /tmp/det_dockerfile_scripts/install_libnss_determined.sh
+
+RUN cp /tmp/det_dockerfile_scripts/github520.sh /root
+ENTRYPOINT["/root/github520.sh"]
 
 RUN rm -r /tmp/*
