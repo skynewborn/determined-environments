@@ -5,7 +5,7 @@ SHORT_GIT_HASH := $(shell git rev-parse --short HEAD)
 
 NGC_REGISTRY := nvcr.io/isv-ngc-partner/determined
 NGC_PUBLISH := 1
-export DOCKERHUB_REGISTRY := ai2robo
+export DOCKERHUB_REGISTRY := docker.ai2rob.com/ai2robo
 export REGISTRY_REPO := determined-custom
 
 CPU_PREFIX_38 := $(REGISTRY_REPO):py-3.8-
@@ -194,6 +194,7 @@ export TORCH110_PIP_GPU := torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchau
 export TORCH113_PIP_GPU := torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1+cu117 -f https://mirrors.aliyun.com/pytorch-wheels/cu117/
 export TORCH20_PIP_GPU := torch==2.0.1+cu117 torchvision==0.15.2+cu117 torchaudio==2.0.2+cu117 -f https://mirrors.aliyun.com/pytorch-wheels/cu117/
 export TORCH_TB_PROFILER_PIP := torch-tb-profiler==0.4.1
+export APEX_GIT_URL := https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d
 export GPU_PT110_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10$(GPU_SUFFIX)
 export GPU_PT113_ENVIRONMENT_NAME := $(CUDA_117_PREFIX)pytorch-1.13$(GPU_SUFFIX)
 export GPU_PT20_ENVIRONMENT_NAME := $(CUDA_117_PREFIX)pytorch-2.0$(GPU_SUFFIX)
@@ -205,7 +206,7 @@ build-pt110-gpu: build-gpu-cuda-113-base
 		--build-arg TORCH_PIP="$(TORCH110_PIP_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(VERSION) \
@@ -218,7 +219,7 @@ build-pt113-gpu: build-gpu-cuda-117-base
 		--build-arg TORCH_PIP="$(TORCH113_PIP_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(VERSION) \
@@ -231,7 +232,7 @@ build-pt20-gpu: build-gpu-cuda-117-base
 		--build-arg TORCH_PIP="$(TORCH20_PIP_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(VERSION) \
@@ -265,7 +266,7 @@ build-deepspeed-gpu: build-gpu-cuda-113-base
 		--build-arg TORCH_PIP="$(TORCH_PIP_DEEPSPEED_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		--build-arg DEEPSPEED_PIP="deepspeed==$(DEEPSPEED_VERSION)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_DEEPSPEED_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
@@ -283,7 +284,7 @@ build-gpt-neox-deepspeed-gpu: build-gpu-cuda-113-base
 		--build-arg TORCH_PIP="$(TORCH_PIP_DEEPSPEED_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		--build-arg DEEPSPEED_PIP="git+https://github.com/determined-ai/deepspeed.git@eleuther_dai" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_GPT_NEOX_DEEPSPEED_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
@@ -414,7 +415,7 @@ build-tf2-gpu: build-gpu-cuda-113-base
 		--build-arg TORCH_PIP="$(TORCH_PIP_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="3.7;6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg HOROVOD_PIP="$(HOROVOD_PIP_COMMAND)" \
 		--build-arg WITH_AWS_TRACE="$(WITH_AWS_TRACE)" \
 		--build-arg INTERNAL_AWS_DS="$(INTERNAL_AWS_DS)" \
@@ -439,7 +440,7 @@ build-pt-gpu: build-gpu-cuda-113-base
 		--build-arg TORCH_PIP="$(TORCH_PIP_GPU)" \
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="3.7;6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
 		--build-arg HOROVOD_PIP="$(HOROVOD_PIP_COMMAND)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
 		--build-arg HOROVOD_WITH_MPI="$(HOROVOD_WITH_MPI)" \
@@ -509,10 +510,13 @@ build-pt2-gpu: build-gpu-cuda-118-base
 
 .PHONY: publish-private-registry
 publish-private-registry:
-	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_113_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION) $(ARTIFACTS_DIR)
-	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_117_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION) $(ARTIFACTS_DIR)
-	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_118_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION) $(ARTIFACTS_DIR)
-	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_120_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION) $(ARTIFACTS_DIR)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_113_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_117_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_118_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_120_BASE_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME) $(SHORT_GIT_HASH) $(VERSION)
+	scripts/publish-docker.sh ai2robo $(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME) $(SHORT_GIT_HASH) $(VERSION)
 
 
 # tf1 and tf2.4 images are not published to NGC due to vulnerabilities.

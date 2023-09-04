@@ -33,3 +33,4 @@ rm -f "./${CONDA_INSTALLER}"
 conda install python=${PYTHON_VERSION}
 conda update --prefix ${CONDA_DIR} --all -y
 conda clean --all -f -y
+conda init bash
