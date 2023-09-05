@@ -511,7 +511,7 @@ build-pt20-gpu: build-gpu-cuda-117-base
 		.
 
 .PHONY: build-pt2-mmdet-gpu
-build-pt20-gpu: build-pt20-gpu
+build-pt2-mmdet-gpu: build-pt20-gpu
 	docker build -f Dockerfile-mmdet-gpu \
 		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH)"
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT2_MMDET_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
