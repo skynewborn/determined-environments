@@ -9,3 +9,4 @@ make build-gpu-cuda-120-base
 make build-pt110-gpu
 make build-pt113-gpu
 make build-pt20-gpu
+make build-pt2-mmdet-gpu
