@@ -190,41 +190,6 @@ build-gpu-cuda-120-base:
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_CUDA_120_BASE_NAME)-$(VERSION) \
 		.
 
-export TORCH110_PIP_GPU := torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://mirrors.aliyun.com/pytorch-wheels/cu113/
-export TORCH113_PIP_GPU := torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1+cu117 -f https://mirrors.aliyun.com/pytorch-wheels/cu117/
-export TORCH_TB_PROFILER_PIP := torch-tb-profiler==0.4.1
-export APEX_GIT_URL := https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d
-export GPU_PT110_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10$(GPU_SUFFIX)
-export GPU_PT113_ENVIRONMENT_NAME := $(CUDA_117_PREFIX)pytorch-1.13$(GPU_SUFFIX)
-
-.PHONY: build-pt110-gpu
-build-pt110-gpu: build-gpu-cuda-113-base
-	docker build -f Dockerfile-default-gpu \
-		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_CUDA_113_BASE_NAME)-$(SHORT_GIT_HASH)" \
-		--build-arg TORCH_PIP="$(TORCH110_PIP_GPU)" \
-		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
-		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
-		--build-arg "$(NCCL_BUILD_ARG)" \
-		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
-		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(VERSION) \
-		.
-
-.PHONY: build-pt113-gpu
-build-pt113-gpu: build-gpu-cuda-117-base
-	docker build -f Dockerfile-default-gpu \
-		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_CUDA_117_BASE_NAME)-$(SHORT_GIT_HASH)" \
-		--build-arg TORCH_PIP="$(TORCH113_PIP_GPU)" \
-		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
-		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
-		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
-		--build-arg "$(NCCL_BUILD_ARG)" \
-		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
-		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(VERSION) \
-		.
-
-
-# Full images.
 export ROCM50_TORCH_TF_ENVIRONMENT_NAME := $(ROCM_50_PREFIX)pytorch-1.10-tf-2.7-rocm
 
 .PHONY: build-pytorch10-tf27-rocm50
@@ -241,7 +206,8 @@ DEEPSPEED_VERSION := 0.8.3
 export GPU_DEEPSPEED_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10-deepspeed-$(DEEPSPEED_VERSION)$(GPU_SUFFIX)
 export GPU_GPT_NEOX_DEEPSPEED_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10-gpt-neox-deepspeed$(GPU_SUFFIX)
 export TORCH_PIP_DEEPSPEED_GPU := torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://mirrors.aliyun.com/pytorch-wheels/cu113/
-#export TORCH_TB_PROFILER_PIP := torch-tb-profiler==0.4.1
+export TORCH_TB_PROFILER_PIP := torch-tb-profiler==0.4.1
+export APEX_GIT_URL := https://github.com/determined-ai/apex.git@3caf0f40c92e92b40051d3afff8568a24b8be28d
 
 # This builds deepspeed environment off of upstream microsoft/DeepSpeed.
 .PHONY: build-deepspeed-gpu
@@ -437,6 +403,48 @@ build-pt-gpu: build-gpu-cuda-113-base
 		-t $(NGC_REGISTRY)/$(GPU_PT_ENVIRONMENT_NAME)-$(VERSION) \
 		.
 
+export TORCH110_PIP_GPU := torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://mirrors.aliyun.com/pytorch-wheels/cu113/
+export TORCH113_PIP_GPU := torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1+cu117 -f https://mirrors.aliyun.com/pytorch-wheels/cu117/
+export GPU_PT110_ENVIRONMENT_NAME := $(CUDA_113_PREFIX)pytorch-1.10$(GPU_SUFFIX)
+export GPU_PT113_ENVIRONMENT_NAME := $(CUDA_117_PREFIX)pytorch-1.13$(GPU_SUFFIX)
+
+.PHONY: build-pt110-gpu
+build-pt110-gpu: build-gpu-cuda-113-base
+	docker build -f Dockerfile-default-gpu \
+		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_CUDA_113_BASE_NAME)-$(SHORT_GIT_HASH)" \
+		--build-arg TORCH_PIP="$(TORCH110_PIP_GPU)" \
+		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
+		--build-arg TORCH_CUDA_ARCH_LIST="3.7;6.0;6.1;6.2;7.0;7.5;8.0" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
+		--build-arg HOROVOD_PIP="$(HOROVOD_PIP_COMMAND)" \
+		--build-arg "$(NCCL_BUILD_ARG)" \
+		--build-arg HOROVOD_WITH_MPI="$(HOROVOD_WITH_MPI)" \
+		--build-arg HOROVOD_WITHOUT_MPI="$(HOROVOD_WITHOUT_MPI)" \
+		--build-arg HOROVOD_CPU_OPERATIONS="$(HOROVOD_CPU_OPERATIONS)" \
+		--build-arg DEEPSPEED_PIP="deepspeed==$(DEEPSPEED_VERSION)" \
+		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
+		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT110_ENVIRONMENT_NAME)-$(VERSION) \
+		.
+
+.PHONY: build-pt113-gpu
+build-pt113-gpu: build-gpu-cuda-117-base
+	docker build -f Dockerfile-default-gpu \
+		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_CUDA_117_BASE_NAME)-$(SHORT_GIT_HASH)" \
+		--build-arg TORCH_PIP="$(TORCH113_PIP_GPU)" \
+		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
+		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
+		--build-arg APEX_GIT="$(APEX_GIT_URL)" \
+		--build-arg HOROVOD_PIP="$(HOROVOD_PIP_COMMAND)" \
+		--build-arg "$(NCCL_BUILD_ARG)" \
+		--build-arg HOROVOD_WITH_MPI="$(HOROVOD_WITH_MPI)" \
+		--build-arg HOROVOD_WITHOUT_MPI="$(HOROVOD_WITHOUT_MPI)" \
+		--build-arg HOROVOD_CPU_OPERATIONS="$(HOROVOD_CPU_OPERATIONS)" \
+		--build-arg DEEPSPEED_PIP="deepspeed==$(DEEPSPEED_VERSION)" \
+		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
+		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT113_ENVIRONMENT_NAME)-$(VERSION) \
+		.
+
+
 # torch 2.0 recipes
 TORCH2_VERSION := 2.0
 TORCH2_PIP_CPU := torch==2.0.1+cpu torchvision==0.15.2+cpu torchaudio==2.0.2 --index-url https://mirrors.aliyun.com/pytorch-wheels/cpu
@@ -505,7 +513,12 @@ build-pt20-gpu: build-gpu-cuda-117-base
 		--build-arg TORCH_TB_PROFILER_PIP="$(TORCH_TB_PROFILER_PIP)" \
 		--build-arg TORCH_CUDA_ARCH_LIST="6.0;6.1;6.2;7.0;7.5;8.0" \
 		--build-arg APEX_GIT="$(TORCH2_APEX_GIT_URL)" \
+		--build-arg HOROVOD_PIP="$(HOROVOD_PIP_COMMAND)" \
 		--build-arg "$(NCCL_BUILD_ARG)" \
+		--build-arg HOROVOD_WITH_MPI="$(HOROVOD_WITH_MPI)" \
+		--build-arg HOROVOD_WITHOUT_MPI="$(HOROVOD_WITHOUT_MPI)" \
+		--build-arg HOROVOD_CPU_OPERATIONS="$(HOROVOD_CPU_OPERATIONS)" \
+		--build-arg DEEPSPEED_PIP="deepspeed==$(DEEPSPEED_VERSION)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(VERSION) \
 		.
@@ -513,7 +526,7 @@ build-pt20-gpu: build-gpu-cuda-117-base
 .PHONY: build-pt2-mmdet-gpu
 build-pt2-mmdet-gpu: build-pt20-gpu
 	docker build -f Dockerfile-mmdet-gpu \
-		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH)"
+		--build-arg BASE_IMAGE="$(DOCKERHUB_REGISTRY)/$(GPU_PT20_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH)" \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT2_MMDET_ENVIRONMENT_NAME)-$(SHORT_GIT_HASH) \
 		-t $(DOCKERHUB_REGISTRY)/$(GPU_PT2_MMDET_ENVIRONMENT_NAME)-$(VERSION) \
 		.
